@@ -1,4 +1,18 @@
+body {
+  background-color: gainsboro
+}
+
 svg {
   margin: 40px;
   overflow: visible;
+}
+
+marquee {
+  font-size: 30px;
+}
+
+img {
+  object-fit: scale-down;
+  height: 100px;
+  width: 100%;
 }

@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { onRefresh, onTrain } from './ui';
+import { onRefresh, onTrain, onTest } from './ui';
 
 const Y_MAX = 400;
 const X_MAX = 400;
@@ -48,7 +48,7 @@ const generatePoints = (num:number):Point[] => Array.from(Array(num)).map(() => 
 
 const randomPoints = generatePoints(200);
 
-const draw = (weights:Weights) => {
+const draw = (weights:Weights, pointsDataset: Point[]) => {
   const canvas = d3.select("#canvas");
   canvas.select("svg").remove()
   const svg = canvas
@@ -57,7 +57,7 @@ const draw = (weights:Weights) => {
   .attr("height", Y_MAX);
   const padding = 20;
   const points = svg.selectAll("circle")
-    .data(randomPoints)
+    .data(pointsDataset)
     .enter()
     .append("circle")
     .attr("cx", p => p.x)
@@ -99,7 +99,7 @@ const updateWeights = (trainingSetSize: number, initialWeights: Weights) => {
     return currentWeights;
   });
   console.log('currentWeights::', currentWeights)
-  draw(currentWeights);
+  draw(currentWeights, randomPoints);
 };
 
 updateWeights(100, randomWeights());
@@ -108,3 +108,4 @@ updateWeights(100, randomWeights());
 
 onRefresh((setSize) => updateWeights(setSize, randomWeights()))
 onTrain((setSize) => updateWeights(setSize, currentWeights))
+onTest((points) => draw(currentWeights, generatePoints(points)))

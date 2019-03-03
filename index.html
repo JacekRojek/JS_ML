@@ -7,10 +7,11 @@
   <title>Document</title>
 </head>
 <body>
-  <h2>Simple Perceptron</h2>
+  <marquee behavior="alternate">🔥Simple Perceptron🔥</marquee>
+  <img src="http://www.animatedimages.org/data/media/695/animated-under-construction-image-0053.gif"/>
   <div id="canvas"></div>
   <div id="controls">
-    <button id="refresh">Refresh</button>
+    <button id="refresh">Refresh</button><br><br>
     <label for="training-set-size">Training set size</label>
     <input
       placeholder="100"
@@ -19,7 +20,16 @@
       id="training-set-size"
       value="100"
     >
-    <button id="train">Train</button>
+    <button id="train">Train</button><br><br>
+    <label for="test-size">Training set size</label>
+    <input
+      placeholder="100"
+      type="number"
+      name="test-size"
+      id="test-size"
+      value="100"
+    >
+    <button id="test">Test with new Data</button>
   </div>
   <script src="./index.ts"></script>
 </body>
