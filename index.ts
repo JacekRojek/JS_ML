@@ -60,10 +60,10 @@ const draw = (weights:Weights) => {
     .data(randomPoints)
     .enter()
     .append("circle")
-    .attr("cx", d => d.x)
-    .attr("cy", d => d.y)
+    .attr("cx", p => p.x)
+    .attr("cy", p => p.y)
     .attr("r", 2)
-    .style("fill", (d) => d.x > 2 * d.y ? 'red' : 'blue');
+    .style("fill", (p) => guess(weights, p) === -1  ? 'red' : 'blue');
 
     var line = svg
       .append("line")
