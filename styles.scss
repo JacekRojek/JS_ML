@@ -1,5 +1,9 @@
 body {
-  background-color: gainsboro
+  background-color: gainsboro;
+  #canvas {
+    width: 450px;
+    overflow: hidden;
+  }
 }
 
 svg {

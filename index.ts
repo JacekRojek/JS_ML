@@ -1,10 +1,11 @@
 import * as d3 from 'd3';
-import { onRefresh, onTrain, onTest } from './ui';
+import { onRefresh, onTrain, onTest, onNoiseChange, onSlopeChange } from './ui';
 
 const Y_MAX = 400;
 const X_MAX = 400;
+let noiseLevel = 1;
+let slope = 1;
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const rand = (high, low) => Math.random() * (high - low) + low;
 
 type Team = 1 | -1;
@@ -39,7 +40,12 @@ const randomWeights = ():Weights => ({
   y: rand(-1, 1),
 });
 
-const team = (point:Point):Team => (point.x > 2 * point.y ? 1 : -1);
+const team = (point:Point):Team => (
+  point.x + rand(-noiseLevel, noiseLevel) >
+  slope * point.y + rand(-noiseLevel, noiseLevel)
+  ? 1
+  : -1
+);
 
 const generatePoints = (num:number):Point[] => Array.from(Array(num)).map(() => ({
   x: rand(0, X_MAX),
@@ -54,23 +60,23 @@ const draw = (weights:Weights, pointsDataset: Point[]) => {
   const svg = canvas
   .append("svg")
   .attr("width", X_MAX)
-  .attr("height", Y_MAX);
+  .attr("height", Y_MAX)
   const padding = 20;
   const points = svg.selectAll("circle")
     .data(pointsDataset)
     .enter()
     .append("circle")
     .attr("cx", p => p.x)
-    .attr("cy", p => p.y)
+    .attr("cy", p => Y_MAX - p.y)
     .attr("r", 2)
     .style("fill", (p) => guess(weights, p) === -1  ? 'red' : 'blue');
 
     var line = svg
       .append("line")
       .attr("x1", 0)
-      .attr("y1", 0)
-      .attr("x2", X_MAX)
-      .attr("y2", Y_MAX/2)
+      .attr("y1", Y_MAX)
+      .attr("x2", X_MAX * slope)
+      .attr("y2", 0)
       .attr("stroke-width", 0.5)
       .attr("stroke", "green")
 
@@ -93,6 +99,7 @@ const updateWeights = (trainingSetSize: number, initialWeights: Weights) => {
     point,
     team: team(point),
   }));
+  
   currentWeights = initialWeights;
   examples.forEach((example) => {
     currentWeights = train(currentWeights, example.point, example.team);
@@ -100,6 +107,8 @@ const updateWeights = (trainingSetSize: number, initialWeights: Weights) => {
   });
   console.log('currentWeights::', currentWeights)
   draw(currentWeights, randomPoints);
+  // drawing test data
+  // draw(currentWeights, examples.map(e => e.point));
 };
 
 updateWeights(100, randomWeights());
@@ -109,3 +118,5 @@ updateWeights(100, randomWeights());
 onRefresh((setSize) => updateWeights(setSize, randomWeights()))
 onTrain((setSize) => updateWeights(setSize, currentWeights))
 onTest((points) => draw(currentWeights, generatePoints(points)))
+onNoiseChange((newValue) => { noiseLevel = newValue})
+onSlopeChange((newValue) => { slope = newValue})
