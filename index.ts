@@ -1,4 +1,4 @@
-// const R = require('ramda');
+import * as d3 from 'd3';
 import { onRefresh, onTrain } from './ui';
 
 const Y_MAX = 400;
@@ -41,11 +41,6 @@ const randomWeights = ():Weights => ({
 
 const team = (point:Point):Team => (point.x > 2 * point.y ? 1 : -1);
 
-// const testTrain = () => {
-//   const point = { x: 200, y: 400 }; // -1
-//   return train(randomWeights, point, team(point));
-// };
-
 const generatePoints = (num:number):Point[] => Array.from(Array(num)).map(() => ({
   x: rand(0, X_MAX),
   y: rand(0, Y_MAX),
@@ -54,17 +49,42 @@ const generatePoints = (num:number):Point[] => Array.from(Array(num)).map(() => 
 const randomPoints = generatePoints(200);
 
 const draw = (weights:Weights) => {
-  window.document.getElementById('canvas').innerHTML = `
-  <svg width="${X_MAX}" height="${Y_MAX}">
-    ${randomPoints.map(point => `
-      <circle 
-          cx="${point.x}"
-          cy="${point.y}"
-          r="3"
-          fill="${guess(weights, point) === -1 ? 'blue' : 'red' }"/>`)}
-    <line x1="0" x2="${X_MAX}" y1="0" y2="${Y_MAX/2}" stroke="purple" />
-  </svg>
-  `;
+  const canvas = d3.select("#canvas");
+  canvas.select("svg").remove()
+  const svg = canvas
+  .append("svg")
+  .attr("width", X_MAX)
+  .attr("height", Y_MAX);
+  const padding = 20;
+  const points = svg.selectAll("circle")
+    .data(randomPoints)
+    .enter()
+    .append("circle")
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y)
+    .attr("r", 2)
+    .style("fill", (d) => d.x > 2 * d.y ? 'red' : 'blue');
+
+    var line = svg
+      .append("line")
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", X_MAX)
+      .attr("y2", Y_MAX/2)
+      .attr("stroke-width", 0.5)
+      .attr("stroke", "green")
+
+      var y_axis = d3.axisLeft(
+        d3.scaleLinear().range([Y_MAX, 0]))
+      var x_axis = d3.axisBottom(
+        d3.scaleLinear().range([0, X_MAX]))
+
+      svg.append("g")
+        .attr("transform", "translate(0, 0)")
+        .call(y_axis);
+      svg.append("g")
+        .attr("transform", `translate(0, ${Y_MAX})`)
+        .call(x_axis);
 };
 
 let currentWeights = randomWeights();
