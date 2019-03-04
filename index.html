@@ -20,21 +20,39 @@
       id="noise-level"
       value="10"
     ><br><br>
-    <label for="slope">Function slope</label>
+    <label for="learning-rate">Learning Rate</label>
     <input
-      placeholder="1"
+      placeholder="0.2"
+      type="number"
+      name="learning-rate"
+      id="learning-rate"
+      value="0.2"
+    ><br><br>
+    <h4>Function Parameters</h4>
+    <label for="slope">Slope</label>
+    <input
+      placeholder="2"
       type="number"
       name="slope"
       id="slope"
-      value="1"
+      value="2"
     ><br><br>
+    <label for="offset">Offset (0-1)</label>
+    <input
+      placeholder="-0.4"
+      type="number"
+      name="offset"
+      id="offset"
+      value="-0.4"
+    ><br><br>
+    <br><br>
     <label for="training-set-size">Training set size</label>
     <input
-      placeholder="100"
+      placeholder="100000"
       type="number"
       name="training-set-size"
       id="training-set-size"
-      value="100"
+      value="100000"
     >
     <button id="train">Train</button><br><br>
     <label for="test-size">Test size</label>
