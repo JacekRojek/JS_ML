@@ -1,19 +1,17 @@
-import * as d3 from 'd3';
 import { onRefresh, onTrain, onTest, onNoiseChange, onSlopeChange, onLearningRateChange, onOffsetChange } from './ui';
 import { Team, Point, Weights } from './types';
 import { X_MAX, Y_MAX } from './config';
 import { guess, rand, f } from './utils/utils';
 import { CONFIG } from './config';
 import { draw } from './drawing';
-const { learningRate } = CONFIG
 
 function train(weights:Weights, point:Point, team:Team):Weights {
   const guessResult = guess(weights, point);
   const error = team - guessResult;
   return {
-    x: weights.x + point.x * error * learningRate,
-    y: weights.y + point.y * error * learningRate,
-    bias: weights.bias + point.bias * error * learningRate,
+    x: weights.x + point.x * error * CONFIG.learningRate,
+    y: weights.y + point.y * error * CONFIG.learningRate,
+    bias: weights.bias + point.bias * error * CONFIG.learningRate,
   };
 }
 
