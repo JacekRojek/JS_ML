@@ -29,13 +29,18 @@ export const draw = (weights:Weights, pointsDataset: Point[]) => {
       .attr("stroke", "green")
 
       var y_axis = d3.axisLeft(
-        d3.scaleLinear().range([Y_MAX/2, -Y_MAX/2]))
+        d3.scaleLinear()
+        .domain([-Y_MAX/2, Y_MAX/2])
+        .range([Y_MAX/2, -Y_MAX/2]))
       var x_axis = d3.axisBottom(
-        d3.scaleLinear().range([-X_MAX/2, X_MAX/2]))
+        d3.scaleLinear()
+        .domain([-X_MAX/2, X_MAX/2])
+        .range([-X_MAX/2, X_MAX/2]))
 
         svg.append("g")
         .attr("transform", `translate(${X_MAX/2}, ${Y_MAX})`)
         .call(x_axis);
+
         svg.append("g")
           .attr("transform", `translate(0, ${X_MAX/2})`)
           .call(y_axis);
