@@ -1,100 +1,67 @@
-class ActivationFunction {
-  constructor(func, dfunc) {
-    this.func = func;
-    this.dfunc = dfunc;
-  }
-}
+import { Matrix } from "./matrix";
 
-let sigmoid = new ActivationFunction(
-  x => 1 / (1 + Math.exp(-x)),
-  y => y * (1 - y)
-);
+const sigmoid = (x:number):number => 1 / (1 + Math.exp(-x));
 
-let tanh = new ActivationFunction(
-  x => Math.tanh(x),
-  y => 1 - (y * y)
-);
-
+const dsigmoid = (y:number):number => y * (1 - y);
 
 class NeuralNetwork {
-  // TODO: document what a, b, c are
-  constructor(a, b, c) {
-    if (a instanceof NeuralNetwork) {
-      this.input_nodes = a.input_nodes;
-      this.hidden_nodes = a.hidden_nodes;
-      this.output_nodes = a.output_nodes;
+  constructor(input_nodes, hidden_nodes, output_nodes) {
+    this.input_nodes = input_nodes;
+    this.hidden_nodes = hidden_nodes;
+    this.output_nodes = output_nodes;
 
-      this.weights_ih = a.weights_ih.copy();
-      this.weights_ho = a.weights_ho.copy();
+    this.weights_ih = new Matrix(this.hidden_nodes, this.input_nodes);
+    this.weights_ho = new Matrix(this.output_nodes, this.hidden_nodes);
+    this.weights_ih.randomize();
+    this.weights_ho.randomize();
 
-      this.bias_h = a.bias_h.copy();
-      this.bias_o = a.bias_o.copy();
-    } else {
-      this.input_nodes = a;
-      this.hidden_nodes = b;
-      this.output_nodes = c;
-
-      this.weights_ih = new Matrix(this.hidden_nodes, this.input_nodes);
-      this.weights_ho = new Matrix(this.output_nodes, this.hidden_nodes);
-      this.weights_ih.randomize();
-      this.weights_ho.randomize();
-
-      this.bias_h = new Matrix(this.hidden_nodes, 1);
-      this.bias_o = new Matrix(this.output_nodes, 1);
-      this.bias_h.randomize();
-      this.bias_o.randomize();
-    }
-    // TODO: copy these as well
-    this.setLearningRate();
-    this.setActivationFunction();
+    this.bias_h = new Matrix(this.hidden_nodes, 1);
+    this.bias_o = new Matrix(this.output_nodes, 1);
+    this.bias_h.randomize();
+    this.bias_o.randomize();
+    this.learning_rate = 0.1;
   }
 
-  input_nodes: any;
-  hidden_nodes: any;
-  output_nodes: any;
-  weights_ih: any;
-  weights_ho: any;
-  bias_h: any;
-  bias_o: any;
-  
-  predict(input_array) {
+  input_nodes: number;
+  hidden_nodes: number;
+  output_nodes: number;
 
+  weights_ih: Matrix;
+  weights_ho: Matrix;
+
+  bias_h: Matrix;
+  bias_o: Matrix;
+  learning_rate: number;
+
+  feedForward(input_array:number[]):number[] {
     // Generating the Hidden Outputs
     let inputs = Matrix.fromArray(input_array);
     let hidden = Matrix.multiply(this.weights_ih, inputs);
     hidden.add(this.bias_h);
     // activation function!
-    hidden.map(this.activation_function.func);
+    hidden.map(sigmoid);
 
     // Generating the output's output!
     let output = Matrix.multiply(this.weights_ho, hidden);
     output.add(this.bias_o);
-    output.map(this.activation_function.func);
+    output.map(sigmoid);
 
     // Sending back to the caller!
     return output.toArray();
   }
 
-  setLearningRate(learning_rate = 0.1) {
-    this.learning_rate = learning_rate;
-  }
-
-  setActivationFunction(func = sigmoid) {
-    this.activation_function = func;
-  }
-
-  train(input_array, target_array) {
+  train(input_array:number[], target_array:number[]):void {
     // Generating the Hidden Outputs
     let inputs = Matrix.fromArray(input_array);
     let hidden = Matrix.multiply(this.weights_ih, inputs);
     hidden.add(this.bias_h);
     // activation function!
-    hidden.map(this.activation_function.func);
+    hidden.map(sigmoid);
 
     // Generating the output's output!
     let outputs = Matrix.multiply(this.weights_ho, hidden);
     outputs.add(this.bias_o);
-    outputs.map(this.activation_function.func);
+    outputs.map(sigmoid);
 
     // Convert array to matrix object
     let targets = Matrix.fromArray(target_array);
@@ -105,7 +72,7 @@ class NeuralNetwork {
 
     // let gradient = outputs * (1 - outputs);
     // Calculate gradient
-    let gradients = Matrix.map(outputs, this.activation_function.dfunc);
+    let gradients = Matrix.map(outputs, dsigmoid);
     gradients.multiply(output_errors);
     gradients.multiply(this.learning_rate);
 
@@ -124,7 +91,7 @@ class NeuralNetwork {
     let hidden_errors = Matrix.multiply(who_t, output_errors);
 
     // Calculate hidden gradient
-    let hidden_gradient = Matrix.map(hidden, this.activation_function.dfunc);
+    let hidden_gradient = Matrix.map(hidden, dsigmoid);
     hidden_gradient.multiply(hidden_errors);
     hidden_gradient.multiply(this.learning_rate);
 
@@ -135,46 +102,6 @@ class NeuralNetwork {
     this.weights_ih.add(weight_ih_deltas);
     // Adjust the bias by its deltas (which is just the gradients)
     this.bias_h.add(hidden_gradient);
-
-    // outputs.print();
-    // targets.print();
-    // error.print();
-  }
-
-  serialize() {
-    return JSON.stringify(this);
-  }
-
-  static deserialize(data) {
-    if (typeof data == 'string') {
-      data = JSON.parse(data);
-    }
-    let nn = new NeuralNetwork(data.input_nodes, data.hidden_nodes, data.output_nodes);
-    nn.weights_ih = Matrix.deserialize(data.weights_ih);
-    nn.weights_ho = Matrix.deserialize(data.weights_ho);
-    nn.bias_h = Matrix.deserialize(data.bias_h);
-    nn.bias_o = Matrix.deserialize(data.bias_o);
-    nn.learning_rate = data.learning_rate;
-    return nn;
-  }
-
-
-  // Adding function for neuro-evolution
-  copy() {
-    return new NeuralNetwork(this);
-  }
-
-  mutate(rate) {
-    function mutate(val) {
-      if (Math.random() < rate) {
-        return Math.random() * 1000 - 1;
-      } else {
-        return val;
-      }
-    }
-    this.weights_ih.map(mutate);
-    this.weights_ho.map(mutate);
-    this.bias_h.map(mutate);
-    this.bias_o.map(mutate);
+    return;
   }
 }

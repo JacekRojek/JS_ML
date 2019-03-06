@@ -1,4 +1,4 @@
-class Matrix {
+export class Matrix {
   constructor(rows:number, cols:number) {
     this.rows = rows;
     this.cols = cols;
