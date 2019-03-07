@@ -4,7 +4,7 @@ const sigmoid = (x:number):number => 1 / (1 + Math.exp(-x));
 
 const dsigmoid = (y:number):number => y * (1 - y);
 
-class NeuralNetwork {
+export class NeuralNetwork {
   constructor(input_nodes, hidden_nodes, output_nodes) {
     this.input_nodes = input_nodes;
     this.hidden_nodes = hidden_nodes;
@@ -50,7 +50,7 @@ class NeuralNetwork {
     return output.toArray();
   }
 
-  train(input_array:number[], target_array:number[]):void {
+  train(input_array:number[], target_array:number[]):NeuralNetwork {
     // Generating the Hidden Outputs
     let inputs = Matrix.fromArray(input_array);
     let hidden = Matrix.multiply(this.weights_ih, inputs);
@@ -102,6 +102,6 @@ class NeuralNetwork {
     this.weights_ih.add(weight_ih_deltas);
     // Adjust the bias by its deltas (which is just the gradients)
     this.bias_h.add(hidden_gradient);
-    return;
+    return this;
   }
 }

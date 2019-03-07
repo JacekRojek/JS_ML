@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Simple Neural Network</title>
+  <link rel="stylesheet" href="./main.scss">
+</head>
+<body>
+  <table id="weights-matrix"></table>
+  <button id="refresh">Refresh</button><br><br>
+    <label for="training-set-size">Training set size</label>
+    <input
+      placeholder="10"
+      type="number"
+      name="training-set-size"
+      id="training-set-size"
+      value="10"
+    ><br><br>
+    <label for="learning-rate">Learning Rate</label>
+    <input
+      placeholder="0.2"
+      type="number"
+      name="learning-rate"
+      id="learning-rate"
+      value="0.2"
+    ><br><br>
+  <script src="./index.ts"></script>
+</body>
+</html>
