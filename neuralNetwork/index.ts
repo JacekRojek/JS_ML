@@ -2,11 +2,13 @@ import { NeuralNetwork } from "./neuralNetwork";
 import { rand } from "../utils/utils";
 import { Matrix } from "./matrix";
 import { onRefresh, onLearningRateChange } from "./ui";
+import { drawNN } from "../drawing";
 
 let learningRate = 0.1;
 
-function drawMatrix(tableData:Matrix, name:string) {
-  var table = document.getElementById('weights-matrix');
+function drawMatrix(tableData:Matrix, name:string, id:string) {
+  var table = document.getElementById(id) || document.createElement('table');
+  table.id = id;
   table.innerHTML = ''
   var tableBody = document.createElement('tbody');
   table.appendChild(document.createTextNode(name));
@@ -39,7 +41,7 @@ const training_data = [{
 }];
 
 const train = (setSize) => {
-  const nn = new NeuralNetwork(2, 2, 1);
+  const nn = new NeuralNetwork(2, [3,3], 1);
   nn.learning_rate = learningRate;
   
   for (let i = 0; i < setSize; i++) {
@@ -55,7 +57,15 @@ const train = (setSize) => {
       nn.feedForward(training_data[2].inputs)[0],
       nn.feedForward(training_data[3].inputs)[0],
     ])
-    , 'Prediction');
+    , 'Prediction',
+    'weights-matrix')
+  drawMatrix(nn.weights_ho, 'Weights HO', 'ho');
+  drawMatrix(nn.weights_ih1, 'Weights IH1', 'hi-1');
+  drawMatrix(nn.bias_h1, 'Bias H1', 'bhs1');
+  drawMatrix(nn.weights_h1h2, 'Weights H1H2', 'h1h2');
+  drawMatrix(nn.bias_h2, 'Bias H2', 'bhs2');
+  drawMatrix(nn.bias_o, 'Bias O', 'bo');
+  drawNN(nn)
 }
 
 train(1000)
