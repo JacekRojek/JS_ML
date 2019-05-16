@@ -48,6 +48,7 @@ export class Matrix {
     if (n instanceof Matrix) {
       if (this.rows !== n.rows || this.cols !== n.cols) {
         console.log('Columns and Rows of A must match Columns and Rows of B.');
+        throw new Error('add error')
         return;
       }
       return this.map((e, i, j) => e + n.data[i][j]);
@@ -65,6 +66,8 @@ export class Matrix {
     // Matrix product
     if (a.cols !== b.rows) {
       console.log('Columns of A must match rows of B.')
+      console.log(a.data, b.data)
+      throw new Error('Error');
       return;
     }
 
@@ -82,7 +85,8 @@ export class Matrix {
   multiply(n:Matrix | number):Matrix {
     if (n instanceof Matrix) {
       if (this.rows !== n.rows || this.cols !== n.cols) {
-        console.log('Columns and Rows of A must match Columns and Rows of B.');
+        console.log('Columns and Rows of A must match Columns and Rows of B.', this.data, n.data);
+        throw new Error('Error2');
         return;
       }
 
