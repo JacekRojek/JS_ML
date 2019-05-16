@@ -3,6 +3,7 @@ import { rand } from "../utils/utils";
 import { Matrix } from "./matrix";
 import { onRefresh, onLearningRateChange } from "./ui";
 import { drawNN } from "../drawing";
+import { onTrain } from "../ui";
 
 let learningRate = 0.1;
 
@@ -41,7 +42,7 @@ const training_data = [{
 }];
 
 const train = (setSize) => {
-  const nn = new NeuralNetwork(2, [3,3], 1);
+  const nn = new NeuralNetwork(2, [13, 13], 1);
   nn.learning_rate = learningRate;
   
   for (let i = 0; i < setSize; i++) {
@@ -68,9 +69,10 @@ const train = (setSize) => {
   drawNN(nn)
 }
 
-train(1000)
+train(10)
     
     // UI binding
 
 onRefresh((setSize) => train(setSize))
+onTrain((setSize) => train(setSize))
 onLearningRateChange((newValue) => {  learningRate = newValue})
