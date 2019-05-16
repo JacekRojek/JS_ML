@@ -1,9 +1,9 @@
-import { NeuralNetwork } from "./neuralNetwork";
-import { rand } from "../utils/utils";
-import { Matrix } from "./matrix";
-import { onRefresh, onLearningRateChange } from "./ui";
-import { drawNN } from "../drawing";
-import { onTrain } from "../ui";
+import { NeuralNetwork } from "./neuralNetwork/neuralNetwork";
+import { rand } from "./utils/utils";
+import { Matrix } from "./neuralNetwork/matrix";
+import { onRefresh, onLearningRateChange } from "./neuralNetwork/ui";
+import { drawNN } from "./drawing";
+import { onTrain } from "./ui";
 
 let learningRate = 0.1;
 
