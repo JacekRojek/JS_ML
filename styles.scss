@@ -21,3 +21,11 @@ img {
   height: 100px;
   width: 100%;
 }
+
+tbody {
+  display:block;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
